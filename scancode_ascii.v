@@ -13,6 +13,14 @@ module scancode_ascii(
     always @* begin
         if (extended) begin
             case (scan_code)
+                8'h4A: begin
+                    valid = 1'b1;
+                    ascii_code = "/";
+                end
+                8'h5A: begin
+                    valid = 1'b1;
+                    ascii_code = "\r";
+                end
                 default: begin
                     valid = 1'b0;
                     ascii_code = 8'b0;
@@ -170,7 +178,7 @@ module scancode_ascii(
                 end
                 8'h4E: begin
                     valid = 1'b1;
-                    ascii_code = "-";
+                    ascii_code = shift_mode ? "-" : "_";
                 end
                 8'h55: begin
                     valid = 1'b1;
@@ -191,6 +199,98 @@ module scancode_ascii(
                 8'h0D: begin
                     valid = 1'b1;
                     ascii_code = "\t";
+                end
+                8'h5A: begin
+                    valid = 1'b1;
+                    ascii_code = "\r";
+                end
+                8'h76: begin
+                    valid = 1'b1;
+                    ascii_code = 8'h1B;
+                end
+                8'h54: begin
+                    valid = 1'b1;
+                    ascii_code = "[";
+                end
+                8'h7C: begin
+                    valid = 1'b1;
+                    ascii_code = "*";
+                end
+                8'h7B: begin
+                    valid = 1'b1;
+                    ascii_code = "-";
+                end
+                8'h79: begin
+                    valid = 1'b1;
+                    ascii_code = "+";
+                end
+                8'h71: begin
+                    valid = 1'b1;
+                    ascii_code = ".";
+                end
+                8'h70: begin
+                    valid = 1'b1;
+                    ascii_code = "0";
+                end
+                8'h69: begin
+                    valid = 1'b1;
+                    ascii_code = "1";
+                end
+                8'h72: begin
+                    valid = 1'b1;
+                    ascii_code = "2";
+                end
+                8'h7A: begin
+                    valid = 1'b1;
+                    ascii_code = "3";
+                end
+                8'h6B: begin
+                    valid = 1'b1;
+                    ascii_code = "4";
+                end
+                8'h73: begin
+                    valid = 1'b1;
+                    ascii_code = "5";
+                end
+                8'h74: begin
+                    valid = 1'b1;
+                    ascii_code = "6";
+                end
+                8'h6C: begin
+                    valid = 1'b1;
+                    ascii_code = "7";
+                end
+                8'h75: begin
+                    valid = 1'b1;
+                    ascii_code = "8";
+                end
+                8'h7D: begin
+                    valid = 1'b1;
+                    ascii_code = "9";
+                end
+                8'h5B: begin
+                    valid = 1'b1;
+                    ascii_code = "]";
+                end
+                8'h4C: begin
+                    valid = 1'b1;
+                    ascii_code = ";";
+                end
+                8'h52: begin
+                    valid = 1'b1;
+                    ascii_code = "'";
+                end
+                8'h41: begin
+                    valid = 1'b1;
+                    ascii_code = ",";
+                end
+                8'h49: begin
+                    valid = 1'b1;
+                    ascii_code = ".";
+                end
+                8'h4A: begin
+                    valid = 1'b1;
+                    ascii_code = "/";
                 end
                 default: begin
                     valid = 1'b0;
