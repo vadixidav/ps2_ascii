@@ -123,6 +123,46 @@ module scancode_ascii(
                     valid = 1'b1;
                     ascii_code = "Z";
                 end
+                8'h45: begin
+                    valid = 1'b1;
+                    ascii_code = "0";
+                end
+                8'h16: begin
+                    valid = 1'b1;
+                    ascii_code = "1";
+                end
+                8'h1E: begin
+                    valid = 1'b1;
+                    ascii_code = "2";
+                end
+                8'h26: begin
+                    valid = 1'b1;
+                    ascii_code = "3";
+                end
+                8'h25: begin
+                    valid = 1'b1;
+                    ascii_code = "4";
+                end
+                8'h2E: begin
+                    valid = 1'b1;
+                    ascii_code = "5";
+                end
+                8'h36: begin
+                    valid = 1'b1;
+                    ascii_code = "6";
+                end
+                8'h3D: begin
+                    valid = 1'b1;
+                    ascii_code = "7";
+                end
+                8'h3E: begin
+                    valid = 1'b1;
+                    ascii_code = "8";
+                end
+                8'h46: begin
+                    valid = 1'b1;
+                    ascii_code = "9";
+                end
                 default: begin
                     valid = 1'b0;
                     ascii_code = 8'b0;
