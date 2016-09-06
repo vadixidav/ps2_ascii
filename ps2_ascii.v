@@ -25,6 +25,8 @@ module ps2_ascii(
     reg [10:0] serial_buffer;
     reg last_code_extended;
     reg ignore_next_code;
+    reg left_shift_mode;
+    reg right_shift_mode;
 
     wire [7:0] latest_code;
     wire [7:0] scancode_ascii_code;
@@ -34,6 +36,7 @@ module ps2_ascii(
 
     scancode_ascii scancode_ascii(
         .extended(last_code_extended),
+        .shift_mode(left_shift_mode || right_shift_mode),
         .scan_code(latest_code),
         .ascii_code(scancode_ascii_code),
         .valid(scancode_ascii_valid));
@@ -46,6 +49,8 @@ module ps2_ascii(
             code_counter <= 0;
             last_code_extended <= 1'b0;
             ignore_next_code <= 1'b0;
+            left_shift_mode <= 1'b0;
+            right_shift_mode <= 1'b0;
         end else begin
             if (ps2_clk) begin
                 // If we have seen 1 for 50 microseconds, reset the PS/2 state except for the extended code reg.
@@ -74,12 +79,30 @@ module ps2_ascii(
                                     ignore_next_code <= 1'b1;
                                     new_code <= 1'b0;
                                 end else if (ignore_next_code) begin
+                                    // Actually don't ignore the shift code.
+                                    if (latest_code == 8'h12)
+                                        // Exit shift mode.
+                                        left_shift_mode <= 1'b0;
+                                    if (latest_code == 8'h59)
+                                        // Exit shift mode.
+                                        right_shift_mode <= 1'b0;
                                     last_code_extended <= 1'b0;
                                     ignore_next_code <= 1'b0;
                                     new_code <= 1'b0;
                                 end else begin
-                                    // Check if the scancode has an ASCII value.
-                                    if (scancode_ascii_valid) begin
+                                    // Left shift
+                                    if (latest_code == 8'h12) begin
+                                        left_shift_mode <= 1'b1;
+                                        last_code_extended <= 1'b0;
+                                        ignore_next_code <= 1'b0;
+                                        new_code <= 1'b0;
+                                    // Right shift
+                                    end else if (latest_code == 8'h59) begin
+                                        right_shift_mode <= 1'b1;
+                                        last_code_extended <= 1'b0;
+                                        ignore_next_code <= 1'b0;
+                                        new_code <= 1'b0;
+                                    end else if (scancode_ascii_valid) begin
                                         // Send the ASCII code to the output.
                                         ascii_code <= scancode_ascii_code;
                                         new_code <= 1'b1;
