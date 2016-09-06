@@ -24,9 +24,12 @@ module ps2_ascii(
     reg [3:0] code_counter;
     reg [10:0] serial_buffer;
 
+    wire [7:0] latest_code;
     wire [7:0] scancode_ascii_code;
 
-    scancode_ascii scancode_ascii(.scan_code(serial_buffer[8:1]), .ascii_code(scancode_ascii_code));
+    assign latest_code = serial_buffer[8:1];
+
+    scancode_ascii scancode_ascii(.scan_code(latest_code), .ascii_code(scancode_ascii_code));
 
     always @(posedge clk) begin
         if (reset) begin
@@ -48,11 +51,19 @@ module ps2_ascii(
                     if (debounce_counter == 1) begin
                         debounce_counter <= 0;
                         // We received 10 bits, thus this is the last bit.
-                        if (code_counter == 10) begin
-                            // Send the ASCII code to the output.
-                            ascii_code <= scancode_ascii_code;
-                            new_code <= 1'b1;
-                            code_counter <= 0;
+                        if (code_counter == 9) begin
+                            // The parity and start/stop bits are correct.
+                            if (((^latest_code) ^ serial_buffer[10]) && !serial_buffer[0] && ps2_data) begin
+                                // Send the ASCII code to the output.
+                                ascii_code <= scancode_ascii_code;
+                                new_code <= 1'b1;
+                                code_counter <= 0;
+                            // There is an error with the data.
+                            end else begin
+                                // Don't send the malformed code to the output.
+                                new_code <= 1'b0;
+                                code_counter <= 0;
+                            end
                         // This isn't the last bit, so add it to the buffer.
                         end else begin
                             serial_buffer[code_counter] <= ps2_data;
@@ -70,7 +81,6 @@ module ps2_ascii(
                 debounce_counter <= DEBOUNCE_5US_WAIT_HOST_CYCLES;
                 reset_counter <= DEBOUNCE_50US_WAIT_HOST_CYCLES;
                 new_code <= 1'b0;
-                code_counter <= 0;
             end
         end
     end
