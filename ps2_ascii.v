@@ -23,13 +23,20 @@ module ps2_ascii(
     reg [DEBOUNCE_50US_WAIT_HOST_BITS-1:0] reset_counter;
     reg [3:0] code_counter;
     reg [10:0] serial_buffer;
+    reg last_code_extended;
+    reg ignore_next_code;
 
     wire [7:0] latest_code;
     wire [7:0] scancode_ascii_code;
+    wire scancode_ascii_valid;
 
     assign latest_code = serial_buffer[8:1];
 
-    scancode_ascii scancode_ascii(.scan_code(latest_code), .ascii_code(scancode_ascii_code));
+    scancode_ascii scancode_ascii(
+        .extended(last_code_extended),
+        .scan_code(latest_code),
+        .ascii_code(scancode_ascii_code),
+        .valid(scancode_ascii_valid));
 
     always @(posedge clk) begin
         if (reset) begin
@@ -37,9 +44,11 @@ module ps2_ascii(
             debounce_counter <= 0;
             reset_counter <= DEBOUNCE_50US_WAIT_HOST_CYCLES;
             code_counter <= 0;
+            last_code_extended <= 1'b0;
+            ignore_next_code <= 1'b0;
         end else begin
             if (ps2_clk) begin
-                // If we have seen 1 for 50 microseconds, reset the PS/2 state.
+                // If we have seen 1 for 50 microseconds, reset the PS/2 state except for the extended code reg.
                 if (reset_counter == 0) begin
                     debounce_counter <= 0;
                     code_counter <= 0;
@@ -52,17 +61,44 @@ module ps2_ascii(
                         debounce_counter <= 0;
                         // We received 10 bits, thus this is the last bit.
                         if (code_counter == 9) begin
+                            // The counter is always reset here.
+                            code_counter <= 0;
                             // The parity and start/stop bits are correct.
                             if (((^latest_code) ^ serial_buffer[10]) && !serial_buffer[0] && ps2_data) begin
-                                // Send the ASCII code to the output.
-                                ascii_code <= scancode_ascii_code;
-                                new_code <= 1'b1;
-                                code_counter <= 0;
+                                if (latest_code == 8'hE0) begin
+                                    last_code_extended <= 1'b1;
+                                    ignore_next_code <= 1'b0;
+                                    new_code <= 1'b0;
+                                end else if (latest_code == 8'hF0) begin
+                                    last_code_extended <= 1'b0;
+                                    ignore_next_code <= 1'b1;
+                                    new_code <= 1'b0;
+                                end else if (ignore_next_code) begin
+                                    last_code_extended <= 1'b0;
+                                    ignore_next_code <= 1'b0;
+                                    new_code <= 1'b0;
+                                end else begin
+                                    // Check if the scancode has an ASCII value.
+                                    if (scancode_ascii_valid) begin
+                                        // Send the ASCII code to the output.
+                                        ascii_code <= scancode_ascii_code;
+                                        new_code <= 1'b1;
+                                        last_code_extended <= 1'b0;
+                                        ignore_next_code <= 1'b0;
+                                    end else begin
+                                        // It didn't have a known ASCII value, so just reset everything.
+                                        new_code <= 1'b0;
+                                        last_code_extended <= 1'b0;
+                                        ignore_next_code <= 1'b0;
+                                    end
+                                end
                             // There is an error with the data.
                             end else begin
+                                // TODO: Signal to the PS/2 to resend the code.
                                 // Don't send the malformed code to the output.
                                 new_code <= 1'b0;
-                                code_counter <= 0;
+                                last_code_extended <= 1'b0;
+                                ignore_next_code <= 1'b0;
                             end
                         // This isn't the last bit, so add it to the buffer.
                         end else begin
