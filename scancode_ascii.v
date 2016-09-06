@@ -134,59 +134,59 @@ module scancode_ascii(
                 end
                 8'h45: begin
                     valid = 1'b1;
-                    ascii_code = "0";
+                    ascii_code = shift_mode ? ")" : "0";
                 end
                 8'h16: begin
                     valid = 1'b1;
-                    ascii_code = "1";
+                    ascii_code = shift_mode ? "!" : "1";
                 end
                 8'h1E: begin
                     valid = 1'b1;
-                    ascii_code = "2";
+                    ascii_code = shift_mode ? "@" : "2";
                 end
                 8'h26: begin
                     valid = 1'b1;
-                    ascii_code = "3";
+                    ascii_code = shift_mode ? "#" : "3";
                 end
                 8'h25: begin
                     valid = 1'b1;
-                    ascii_code = "4";
+                    ascii_code = shift_mode ? "$" : "4";
                 end
                 8'h2E: begin
                     valid = 1'b1;
-                    ascii_code = "5";
+                    ascii_code = shift_mode ? "\%" : "5";
                 end
                 8'h36: begin
                     valid = 1'b1;
-                    ascii_code = "6";
+                    ascii_code = shift_mode ? "^" : "6";
                 end
                 8'h3D: begin
                     valid = 1'b1;
-                    ascii_code = "7";
+                    ascii_code = shift_mode ? "&" : "7";
                 end
                 8'h3E: begin
                     valid = 1'b1;
-                    ascii_code = "8";
+                    ascii_code = shift_mode ? "*" : "8";
                 end
                 8'h46: begin
                     valid = 1'b1;
-                    ascii_code = "9";
+                    ascii_code = shift_mode ? "(" : "9";
                 end
                 8'h0E: begin
                     valid = 1'b1;
-                    ascii_code = "`";
+                    ascii_code = shift_mode ? "~" : "`";
                 end
                 8'h4E: begin
                     valid = 1'b1;
-                    ascii_code = shift_mode ? "-" : "_";
+                    ascii_code = shift_mode ? "_" : "-";
                 end
                 8'h55: begin
                     valid = 1'b1;
-                    ascii_code = "=";
+                    ascii_code = shift_mode ? "+" : "=";
                 end
                 8'h5D: begin
                     valid = 1'b1;
-                    ascii_code = "\\";
+                    ascii_code = shift_mode ? "|" : "\\";
                 end
                 8'h66: begin
                     valid = 1'b1;
@@ -210,7 +210,7 @@ module scancode_ascii(
                 end
                 8'h54: begin
                     valid = 1'b1;
-                    ascii_code = "[";
+                    ascii_code = shift_mode ? "{" : "[";
                 end
                 8'h7C: begin
                     valid = 1'b1;
@@ -270,23 +270,23 @@ module scancode_ascii(
                 end
                 8'h5B: begin
                     valid = 1'b1;
-                    ascii_code = "]";
+                    ascii_code = shift_mode ? "}" : "]";
                 end
                 8'h4C: begin
                     valid = 1'b1;
-                    ascii_code = ";";
+                    ascii_code = shift_mode ? ":" : ";";
                 end
                 8'h52: begin
                     valid = 1'b1;
-                    ascii_code = "'";
+                    ascii_code = shift_mode ? "\"" : "'";
                 end
                 8'h41: begin
                     valid = 1'b1;
-                    ascii_code = ",";
+                    ascii_code = shift_mode ? "<" : ",";
                 end
                 8'h49: begin
                     valid = 1'b1;
-                    ascii_code = ".";
+                    ascii_code = shift_mode ? ">" : ".";
                 end
                 8'h4A: begin
                     valid = 1'b1;
