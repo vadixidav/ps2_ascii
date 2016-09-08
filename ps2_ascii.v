@@ -17,7 +17,7 @@ module ps2_ascii(
 
     input clk, reset, ps2_clk, ps2_data;
     output reg new_code;
-    output reg [7:0] ascii_code;
+    output reg [6:0] ascii_code;
 
     reg [DEBOUNCE_5US_WAIT_HOST_BITS-1:0] debounce_counter;
     reg [DEBOUNCE_50US_WAIT_HOST_BITS-1:0] reset_counter;
