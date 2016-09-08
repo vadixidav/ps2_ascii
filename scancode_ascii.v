@@ -154,7 +154,7 @@ module scancode_ascii(
                 end
                 8'h2E: begin
                     valid = 1'b1;
-                    ascii_code = shift_mode ? "\%" : "5";
+                    ascii_code = shift_mode ? "\45" : "5";
                 end
                 8'h36: begin
                     valid = 1'b1;
@@ -186,11 +186,11 @@ module scancode_ascii(
                 end
                 8'h5D: begin
                     valid = 1'b1;
-                    ascii_code = shift_mode ? "|" : "\\";
+                    ascii_code = shift_mode ? "|" : "\134";
                 end
                 8'h66: begin
                     valid = 1'b1;
-                    ascii_code = "\b";
+                    ascii_code = "\10";
                 end
                 8'h29: begin
                     valid = 1'b1;
@@ -198,11 +198,11 @@ module scancode_ascii(
                 end
                 8'h0D: begin
                     valid = 1'b1;
-                    ascii_code = "\t";
+                    ascii_code = "\11";
                 end
                 8'h5A: begin
                     valid = 1'b1;
-                    ascii_code = "\r";
+                    ascii_code = "\15";
                 end
                 8'h76: begin
                     valid = 1'b1;
